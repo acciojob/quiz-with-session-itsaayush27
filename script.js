@@ -1,5 +1,3 @@
-// your JS code here
-
 const questions = [
   {
     question: "What is the capital of France?",
@@ -32,7 +30,6 @@ const questionsElement = document.getElementById("questions");
 const submitBtn = document.getElementById("submit");
 const scoreElement = document.getElementById("score");
 
-// Load saved progress (sessionStorage) or empty object
 let savedProgress = JSON.parse(sessionStorage.getItem("progress")) || {};
 let finalScore = localStorage.getItem("score");
 
@@ -54,12 +51,21 @@ function renderQuestions() {
       // Restore saved answer
       if (savedProgress[i] === choice) {
         input.checked = true;
+        input.setAttribute("checked", "true"); // ✅ Cypress requires this
       }
 
       // Save progress on change
       input.addEventListener("change", () => {
         savedProgress[i] = choice;
         sessionStorage.setItem("progress", JSON.stringify(savedProgress));
+
+        // remove checked="true" from siblings
+        document
+          .querySelectorAll(`input[name="question-${i}"]`)
+          .forEach(radio => radio.removeAttribute("checked"));
+
+        // add checked="true" to current
+        input.setAttribute("checked", "true");
       });
 
       label.appendChild(input);
@@ -72,28 +78,22 @@ function renderQuestions() {
   });
 }
 
-// Calculate score
 function calculateScore() {
   let score = 0;
   questions.forEach((q, i) => {
-    if (savedProgress[i] === q.answer) {
-      score++;
-    }
+    if (savedProgress[i] === q.answer) score++;
   });
   return score;
 }
 
-// Handle submit
 submitBtn.addEventListener("click", () => {
   const score = calculateScore();
   scoreElement.textContent = `Your score is ${score} out of ${questions.length}.`;
   localStorage.setItem("score", score);
 });
 
-// Initial render
 renderQuestions();
 
-// Show last score if exists
 if (finalScore !== null) {
   scoreElement.textContent = `Your score is ${finalScore} out of ${questions.length}.`;
 }

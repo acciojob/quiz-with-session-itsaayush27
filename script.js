@@ -1,5 +1,12 @@
 //your JS code here.
 
+const questionsElement = document.getElementById("questions");
+const submitBtn = document.getElementById("submit");
+const scoreDiv = document.getElementById("score");
+
+// Load saved answers from sessionStorage
+let userAnswers = JSON.parse(sessionStorage.getItem("progress")) || {};
+
 // Do not change code below this line
 // This code will just display the questions to the screen
 const questions = [
